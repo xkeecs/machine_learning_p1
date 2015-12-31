@@ -7,6 +7,8 @@ from sklearn import datasets
 from sklearn.cross_validation import train_test_split
 from sklearn.tree import DecisionTreeRegressor
 import sklearn.metrics as smetrics
+from sklearn import grid_search
+
 ################################
 ### ADD EXTRA LIBRARIES HERE ###
 ################################
@@ -177,9 +179,8 @@ def fit_predict_model(city_data):
 
     # 2. Use gridearch to fine tune the Decision Tree Regressor and find the best model
     # http://scikit-learn.org/stable/modules/generated/sklearn.grid_search.GridSearchCV.html#sklearn.grid_search.GridSearchCV
-    print train_err
-    print test_err
     
+    '''
     for i, d in enumerate(depth):
         regressor = DecisionTreeRegressor(max_depth = d)
         regressor.fit(X_train, y_train)
@@ -192,14 +193,19 @@ def fit_predict_model(city_data):
             max_index = i
             
         test_err[i] = cur_error
-        
+    
     print train_err
     print test_err
+    '''
+
+  
     # Fit the learner to the training data
-    reg = DecisionTreeRegressor(max_depth = max_index + 1)
+    reg = grid_search.GridSearchCV(DecisionTreeRegressor(), parameters, verbose=10, scoring = "median_absolute_error")
+
     print "Final Model: "
-    print reg.fit(X_test, y_test)
-    
+    print reg.fit(X_test, y_test)         
+    print "Optimal parameters: "    
+    print reg.best_estimator_.max_depth
     # Use the model to predict the output of a particular sample
     x = [11.95, 0.00, 18.100, 0, 0.6590, 5.6090, 90.00, 1.385, 24, 680.0, 20.20, 332.09, 12.13]
     y = reg.predict(x)
